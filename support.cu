@@ -23,8 +23,8 @@ void verify(float *A, float *B, float *X, float *parallel_krp, float *parallel_m
     for(int i = 0; i < m; i++){
       for(int j = 0; j < n; j++){
         krp_idx = (i*n+j)%(m*n) + (col*m*n);
-        a_idx = i%m + col;
-        b_idx = j%n + col;
+        a_idx = i%n + n*col;
+        b_idx = j%n + n*col;
         sequential_krp[krp_idx] = A[a_idx] * B[b_idx];
         count++;
         float relativeError = (sequential_krp[krp_idx] - parallel_krp[krp_idx]);
@@ -72,4 +72,3 @@ float elapsedTime(Timer timer) {
     return ((float) ((timer.endTime.tv_sec - timer.startTime.tv_sec) \
                 + (timer.endTime.tv_usec - timer.startTime.tv_usec)/1.0e6));
 }
-

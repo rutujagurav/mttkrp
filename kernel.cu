@@ -75,10 +75,17 @@ void matmul(int d, int c, int k, const float *X, const float *KRP, float *MTTKRP
 }
 __global__ void krp_kernel(int m, int n, int c, const float *A, const float *B, float *KRP)
 {
-   int idx = blockIdx.x * blockDim.x + threadIdx.x;
-   int col = int(idx/(m*n));
-   int pos_in_col = idx - (m*n*col);
-   KRP[idx] = A[pos_in_col%m] * B[pos_in_col%n];
+   int idx = blockIdx.x * blockDim.x + threadIdx.x; //0 to mnc
+   if(idx < m*n*c){
+     int col = int(idx/(m*n));
+     int start_col = m*n*col;
+     int pos_in_col = idx - (start_col);
+     int idx_a = int(pos_in_col/n)%n + (n*col);
+     int idx_b = int(pos_in_col%n+n*col);
+     // printf("\n bid=%d bdim=%d tid=%d idx=%d col=%d start_col=%d pos_in_col=%d idxA=%d idxB=%d\n",blockIdx.x, blockDim.x, threadIdx.x, idx, col, start_col, pos_in_col, idx_a, idx_b);
+     KRP[idx] = A[idx_a] * B[idx_b];
+   }
+
 }
 void krp(int m, int n, int c, const float *A, const float *B, float *KRP)
 {
