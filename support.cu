@@ -44,11 +44,11 @@ void verify(float *A, float *B, float *X, float *parallel_krp, float *parallel_m
     for(int col = 0; col < c; ++col) {
       float sum = 0;
       for(unsigned int i = 0; i < k; ++i) {
-        sum += X[row*k + i]*sequential_krp[i*n + col];
+        sum += X[row*k + i]*sequential_krp[i*c + col];
       }
       count++;
-      float relativeError = (sum - parallel_mttkrp[row*n + col])/sum;
-      printf("%f/%f ", sum, parallel_mttkrp[row*n + col]);
+      float relativeError = (sum - parallel_mttkrp[row*c + col])/sum;
+      printf("%f/%f ", sum, parallel_mttkrp[row*c + col]);
       if (relativeError > relativeTolerance
         || relativeError < -relativeTolerance) {
         printf("\n MTTKRP TEST FAILED %u\n\n",count);
@@ -56,7 +56,7 @@ void verify(float *A, float *B, float *X, float *parallel_krp, float *parallel_m
       }
     }
   }
-  printf("MTTKRP TEST PASSED %u\n\n", count);
+  printf("\nMTTKRP TEST PASSED %u\n\n", count);
 
 }
 
