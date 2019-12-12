@@ -90,5 +90,5 @@ void krp(int m, int n, int c, const float *A, const float *B, float *KRP)
 void mttkrp(int m, int n, int c, int d, const float *A, const float *B, const float *X, float *KRP, float *MTTKRP)
 {
     krp(m,n,c,A,B,KRP);
-    mttkrp(d,c,m*n,X,KRP,MTTKRP);
+    matmul(d,c,m*n,X,KRP,MTTKRP);
 }
