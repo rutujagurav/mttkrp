@@ -31,9 +31,9 @@ int main (int argc, char *argv[])
     dim3 dim_grid, dim_block;
 
     if (argc == 1) {
-        matArow = matBrow = 1000;
+        matArow = matBrow = 10;
         matAcol = matBcol = 5;
-        matXrow = 1000;
+        matXrow = 10;
         matXcol = matArow*matBrow;
     } else if (argc == 5) {
         matArow = atoi(argv[1]);
@@ -58,13 +58,16 @@ int main (int argc, char *argv[])
     MTTKRP_sz = matXrow*matAcol;
 
     A_h = (float*) malloc( sizeof(float)*A_sz );
-    for (unsigned int i=0; i < A_sz; i++) { A_h[i] = (rand()%100)/100.00; }
+    //for (unsigned int i=0; i < A_sz; i++) { A_h[i] = (rand()%100)/100.00; }
+    for (unsigned int i=0; i < A_sz; i++){ A_h[i] = 2.0; }
 
     B_h = (float*) malloc( sizeof(float)*B_sz );
-    for (unsigned int i=0; i < B_sz; i++) { B_h[i] = (rand()%100)/100.00; }
+    //for (unsigned int i=0; i < B_sz; i++) { B_h[i] = (rand()%100)/100.00; }
+    for (unsigned int i=0; i < B_sz; i++) { B_h[i] = 3.0; }
 
     X_h = (float*) malloc( sizeof(float)*X_sz );
-    for (unsigned int i=0; i < X_sz; i++) { X_h[i] = (rand()%100)/100.00; }
+    //for (unsigned int i=0; i < X_sz; i++) { X_h[i] = (rand()%100)/100.00; }
+    for (unsigned int i=0; i < X_sz; i++) { X_h[i] = 1.0; }
 
     KRP_h = (float*) malloc( sizeof(float)*KRP_sz );
     MTTKRP_h = (float*) malloc( sizeof(float)*MTTKRP_sz );

@@ -76,7 +76,9 @@ void matmul(int d, int c, int k, const float *X, const float *KRP, float *MTTKRP
 __global__ void krp_kernel(int m, int n, int c, const float *A, const float *B, float *KRP)
 {
    int idx = blockIdx.x * blockDim.x + threadIdx.x;
-   KRP[idx] = A[idx] * B[idx]; //this is wrong, correct this.
+   int col = int(idx/(m*n));
+   int pos_in_col = idx - (m*n*col);
+   KRP[idx] = A[pos_in_col%m] * B[pos_in_col%n];
 }
 void krp(int m, int n, int c, const float *A, const float *B, float *KRP)
 {

@@ -37,6 +37,7 @@ void verify(float *A, float *B, float *X, float *parallel_krp, float *parallel_m
       }
     }
   }
+  printf("\nKRP TEST PASSED %u\n\n",count);
   count = 0;
   int k = m*n;
   for(int row = 0; row < d; ++row) {
