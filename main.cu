@@ -86,7 +86,7 @@ int main (int argc, char *argv[])
 
     cudaMalloc((void **) &A_d, a_size);
     cudaMalloc((void **) &B_d, b_size);
-    cudaMalloc((void **) &C_d, c_size);
+    cudaMalloc((void **) &X_d, x_size);
     cudaMalloc((void **) &KRP_d, krp_size);
     cudaMalloc((void **) &MTTKRP_d, mttkrp_size);
 

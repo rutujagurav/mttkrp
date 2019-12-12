@@ -71,12 +71,12 @@ void matmul(int d, int c, int k, const float *X, const float *KRP, float *MTTKRP
     // Invoke CUDA kernel -----------------------------------------------------
 
     //INSERT CODE HERE
-    matmul_kernel<<<dim_grid,dim_block>>>(m,n,k,X,KRP,MTTKRP);
+    matmul_kernel<<<dim_grid,dim_block>>>(d,c,k,X,KRP,MTTKRP);
 }
 __global__ void krp_kernel(int m, int n, int c, const float *A, const float *B, float *KRP)
 {
    int idx = blockIdx.x * blockDim.x + threadIdx.x;
-   KRP[idx] = A[] * B[];
+   KRP[idx] = A[idx] * B[idx]; //this is wrong, correct this.
 }
 void krp(int m, int n, int c, const float *A, const float *B, float *KRP)
 {

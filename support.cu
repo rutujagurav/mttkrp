@@ -12,7 +12,7 @@
 
 #include "support.h"
 
-void verify(float *A, float *B, float *X, float *parallel_krp, float *parallel_mttkrp, unsigned int m, unsigned int n, unsigned int c, unsigned int d) {
+void verify(float *A, float *B, float *X, float *parallel_krp, float *parallel_mttkrp, unsigned m, unsigned n, unsigned c, unsigned d) {
 
   const float relativeTolerance = 1e-6;
   unsigned int count = 0;
