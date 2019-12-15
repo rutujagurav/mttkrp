@@ -117,7 +117,7 @@ int main (int argc, char *argv[])
     mttkrp(matArow, matBrow, matAcol, matXrow, A_d, B_d, X_d, KRP_d, MTTKRP_d);
 
     cuda_ret = cudaDeviceSynchronize();
-	if(cuda_ret != cudaSuccess) FATAL("Unable to launch kernel");
+	if(cuda_ret != cudaSuccess) {printf("Cuda failure %s:%d: '%s'\n",__FILE__,__LINE__,cudaGetErrorString(cuda_ret)); FATAL("Unable to launch kernel"); }
     stopTime(&timer); printf("%f s\n", elapsedTime(timer));
 
     // Copy device variables from host ----------------------------------------

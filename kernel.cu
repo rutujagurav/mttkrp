@@ -8,7 +8,8 @@
 
 #include <stdio.h>
 
-#define TILE_SIZE 16
+#define TILE_SIZE 32
+#define KRP_BLOCK_SIZE 1024
 
 __global__ void matmul_kernel(int m, int n, int k, const float *X, const float *KRP, float* MTTKRP) {
 
@@ -80,19 +81,85 @@ __global__ void krp_kernel(int m, int n, int c, const float *A, const float *B, 
      int col = int(idx/(m*n));
      int start_col = m*n*col;
      int pos_in_col = idx - (start_col);
-     int idx_a = int(pos_in_col/n)%n + (n*col);
+     // int idx_a = int(pos_in_col/n)%n + (n*col);
+     int idx_a = int(pos_in_col/n)+m*col;
      int idx_b = int(pos_in_col%n+n*col);
      // printf("\n bid=%d bdim=%d tid=%d idx=%d col=%d start_col=%d pos_in_col=%d idxA=%d idxB=%d\n",blockIdx.x, blockDim.x, threadIdx.x, idx, col, start_col, pos_in_col, idx_a, idx_b);
      KRP[idx] = A[idx_a] * B[idx_b];
    }
 
 }
+
+__global__ void krp_kernel_sharedmem(int m, int n, int c, const float *A, const float *B, float *KRP)
+{
+   int idx = blockIdx.x * blockDim.x + threadIdx.x; //0 to mnc
+
+   __shared__ float tile_A[1024];
+   __shared__ float tile_B[1024];
+
+   int steps_colA = (m+1024-1) / 1024;
+   int steps_colB = (n+1024-1) / 1024;
+   int w;
+
+   if(idx < m*n*c){
+
+     for(int i=0; i<steps_colA; i++){
+       w = i*1024+threadIdx.x;
+       if(w < m*c){
+         tile_A[threadIdx.x] = A[w];
+         // printf("\n IF A: bid=%d bdim=%d tid=%d idx=%d w=%d step=%d, tile_A=%f\n"
+         // ,blockIdx.x, blockDim.x, threadIdx.x, idx, w, i,tile_A[threadIdx.x]);
+
+       }
+
+       else{
+         tile_A[threadIdx.x] = 0.0;
+         // printf("\n ELSE A: bid=%d bdim=%d tid=%d idx=%d col=%d start_col=%d pos_in_col=%d idxA=%d idxB=%d w=%d step=%d tile_A=%f\n"
+         // ,blockIdx.x, blockDim.x, threadIdx.x, idx, col, start_col, pos_in_col, idx_a, idx_b, w, i,tile_A[threadIdx.x]);
+
+       }
+     }
+
+    __syncthreads();
+
+     for(int i=0; i<steps_colB; i++){
+       w = i*1024+threadIdx.x;
+
+       if(w < n*c){
+         tile_B[threadIdx.x] = B[w];
+         // printf("\n IF B: bid=%d bdim=%d tid=%d idx=%d w=%d step=%d, tile_B=%f\n"
+         // ,blockIdx.x, blockDim.x, threadIdx.x, idx, w, i,tile_B[threadIdx.x]);
+
+       }
+
+       else{
+         tile_B[threadIdx.x] = 0.0;
+         // printf("\n ELSE B: bid=%d bdim=%d tid=%d idx=%d col=%d start_col=%d pos_in_col=%d idxA=%d idxB=%d w=%d step=%d tile_B=%f\n"
+         // ,blockIdx.x, blockDim.x, threadIdx.x, idx, col, start_col, pos_in_col, idx_a, idx_b, w, i,tile_B[threadIdx.x]);
+
+       }
+
+      }
+
+      __syncthreads();
+      int col = int(idx/(m*n));
+      int idx_tileA = int(threadIdx.x%m + m*col);
+      int idx_tileB = int(threadIdx.x%n + n*col);
+      if(blockIdx.x == 1)
+        printf("\n bid=%d bdim=%d tid=%d idx=%d col=%d tile_A=%f tile_B=%f\n",blockIdx.x, blockDim.x, threadIdx.x, idx, col, tile_A[idx_tileA],tile_B[idx_tileB]);
+
+      KRP[idx] = tile_A[idx_tileA] * tile_B[idx_tileB];
+   }
+}
+
+
 void krp(int m, int n, int c, const float *A, const float *B, float *KRP)
 {
     const unsigned int BLOCK_SIZE = 1024;
     dim3 dim_block(BLOCK_SIZE, 1,1);
     dim3 dim_grid(((m*n*c)-1)/BLOCK_SIZE+1,1,1);
 
+    // krp_kernel_sharedmem<<<dim_grid,dim_block>>>(m,n,c,A,B,KRP);
     krp_kernel<<<dim_grid,dim_block>>>(m,n,c,A,B,KRP);
 }
 
