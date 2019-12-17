@@ -58,16 +58,16 @@ int main (int argc, char *argv[])
     MTTKRP_sz = matXrow*matAcol;
 
     A_h = (float*) malloc( sizeof(float)*A_sz );
-    for (unsigned int i=0; i < A_sz; i++) { A_h[i] = (rand()%100)/100.00; }
-    // for (unsigned int i=0; i < A_sz; i++){ A_h[i] = 2.0; }
+    // for (unsigned int i=0; i < A_sz; i++) { A_h[i] = (rand()%100)/100.00; }
+    for (unsigned int i=0; i < A_sz; i++){ A_h[i] = i; }
 
     B_h = (float*) malloc( sizeof(float)*B_sz );
-    for (unsigned int i=0; i < B_sz; i++) { B_h[i] = (rand()%100)/100.00; }
-    // for (unsigned int i=0; i < B_sz; i++) { B_h[i] = 3.0; }
+    // for (unsigned int i=0; i < B_sz; i++) { B_h[i] = (rand()%100)/100.00; }
+    for (unsigned int i=0; i < B_sz; i++) { B_h[i] = i; }
 
     X_h = (float*) malloc( sizeof(float)*X_sz );
-    for (unsigned int i=0; i < X_sz; i++) { X_h[i] = (rand()%100)/100.00; }
-    // for (unsigned int i=0; i < X_sz; i++) { X_h[i] = 1.0; }
+    // for (unsigned int i=0; i < X_sz; i++) { X_h[i] = (rand()%100)/100.00; }
+    for (unsigned int i=0; i < X_sz; i++) { X_h[i] = 1.0; }
 
     KRP_h = (float*) malloc( sizeof(float)*KRP_sz );
     MTTKRP_h = (float*) malloc( sizeof(float)*MTTKRP_sz );
